@@ -1,5 +1,8 @@
 import {useState, useRef, useEffect} from "react"
+import useInterval from "./useInterval.js"
 // import audio from "../static"
+
+
 
 export default function Circle({id, firstColor, sound, positions, onSetPositions}) {
 
@@ -10,34 +13,108 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
     const positionRef = useRef()
     // const [position, setPosition] = useState({x: x, y: y})
     const [color, setColor] = useState(firstColor)
+    const [position, setPosition] = useState({x: positions[id].x, y: positions[id].y})
+    const [direction, setDirection] = useState({right: true, down: true})
+    const [timerStarted, setTimerStarted] = useState(false)
 
    
 
-    function moveBall(x, y, down, right) {
+    function moveBall() {
 
-        if (down && right) {
-            return {x: x + 1, y: y + 1};
-        } else if (down && !right) {
-            return {x: x + 1, y: y - 1};
-        } else if (!down && right) {
-            return {x: x - 1, y: y + 1}
+
+        if (direction.down && direction.right) {
+            console.log('down and right')
+            setPosition((prev) =>{ return {x: prev.x + 1, y: prev.y + 1}})
+          
+        } else if (direction.down && !direction.right) {
+            console.log('up and right')
+            setPosition((prev) =>{ return {x: prev.x - 1, y: prev.y + 1}})
+            
+        } else if (!direction.down && direction.right) {
+            
+            setPosition((prev) =>{ return {x: prev.x + 1, y: prev.y - 1}})
         } else {
-            return {x: x - 1, y: y - 1}
+        
+            setPosition((prev) =>{ return {x: prev.x - 1, y: prev.y - 1}})
         }
         
         
     }
 
+    useEffect(() => {
+        onSetPositions(position.x, position.y, id, positions)
+    }, [position])
+
+   
 
 
-    function setNewPositions(x, y) {
-        
-        onSetPositions(x, y, id, positions)
-       
+
+    //initialize starting position / direction of ball
+    let xPosition = position.x;
+    let yPosition = position.y;
+
+
+
+    function startTimer() {
+      
+
     }
 
 
    
+
+
+    function timer() {
+
+        console.log(position)        
+            
+
+    }
+
+
+    useInterval(() => {
+
+        console.log(position)
+
+        moveBall()
+            if (direction.down) {
+                yPosition++;
+            } else {
+                
+                yPosition--;
+            }
+            if (direction.right) {
+                xPosition++;
+            } else {
+                xPosition--;
+            }
+
+            
+            if (position.y > 580) {
+                
+                // animate();
+                // sound.play();
+                setDirection((prev) =>{ return {right: direction.right, down: false}})
+            }
+            if (position.y == 0) {
+                // animate();
+                // sound.play();
+                setDirection((prev) => {return {right: direction.right, down: true}})
+            }
+            if (position.x == 0) {
+                // animate();
+                // sound.play();
+                setDirection((prev) => {return {right: true, down: direction.down}})
+            } if (position.x > 1200) {
+                // animate();
+                // sound.play();
+                setDirection((prev) => {return{right: false, down: direction.down}})
+            }
+       
+}, 10)   
+   
+
+    
     
 
     return (
@@ -48,48 +125,11 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
         
             
             // sound.play()
-            let xPosition = positions[id].x;
-            let yPosition = positions[id].y;
+        
+      
+       
+            
 
-            let down = true;
-            let right = true;
-            setInterval(() => {
-                let newPosition = moveBall(xPosition, yPosition, down, right)
-                if (down) {
-                    yPosition++;
-                } else {
-                    yPosition--;
-                }
-                if (right) {
-                    xPosition++;
-                } else {
-                    xPosition--;
-                }
-
-                
-                if (newPosition.y > 580) {
-                    // animate();
-                    // sound.play();
-                    down = false;
-                }
-                if (newPosition.y == 0) {
-                    // animate();
-                    // sound.play();
-                    down = true;
-                }
-                if (newPosition.x == 0) {
-                    // animate();
-                    // sound.play();
-                    right = true;
-                } if (newPosition.x > 1200) {
-                    // animate();
-                    // sound.play();
-                    right = false;
-                }
-                setNewPositions(newPosition.x, newPosition.y)
-                
-                // setPosition({x: newPosition.x, y: newPosition.y});
-            }, 1000)
             
             
         }}
@@ -97,7 +137,7 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
         ref={positionRef}
         className="circle" 
         style={{width: '100px', height: '100px', borderRadius: '50%', backgroundColor: color,
-        top: positions[id].y, left: positions[id].x}}>
+        top: position.y, left: position.x}}>
 
         </div>
     )
