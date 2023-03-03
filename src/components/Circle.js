@@ -1,13 +1,14 @@
 import {useState, useRef, useEffect} from "react"
 // import audio from "../static"
 
-export default function Circle({x, y, firstColor, file}) {
+export default function Circle({id, firstColor, sound, positions, onSetPositions}) {
 
     // const sound = new Audio(`../Piano_mp3/${file}.mp3`)
     // const sound = new Audio('/Users/matthew/Desktop/Coding/1A_Project_Ideas/bounce-beta/src/static/Piano_mp3/A4.mp3')
+    // console.log(id, positions)
     
     const positionRef = useRef()
-    const [position, setPosition] = useState({x: x, y: y})
+    // const [position, setPosition] = useState({x: x, y: y})
     const [color, setColor] = useState(firstColor)
 
    
@@ -29,26 +30,26 @@ export default function Circle({x, y, firstColor, file}) {
 
 
 
-    const colors = ['green', 'red', 'yellow', 'orange', 'purple']
+    function setNewPositions(x, y) {
+        
+        onSetPositions(x, y, id, positions)
+       
+    }
 
-        let currentColorIndex = 1;
 
-        function animate() {
-            if (currentColorIndex + 1 > currentColorIndex.length) {
-                currentColorIndex = 0;
-            }
-            setColor(colors[currentColorIndex])
-            
-            currentColorIndex++;
-        }
+   
+    
 
     return (
         <div 
 
         onClick={() => {
+
+        
+            
             // sound.play()
-            let xPosition = position.x;
-            let yPosition = position.y;
+            let xPosition = positions[id].x;
+            let yPosition = positions[id].y;
 
             let down = true;
             let right = true;
@@ -85,8 +86,10 @@ export default function Circle({x, y, firstColor, file}) {
                     // sound.play();
                     right = false;
                 }
-                setPosition({x: newPosition.x, y: newPosition.y});
-            }, 1)
+                setNewPositions(newPosition.x, newPosition.y)
+                
+                // setPosition({x: newPosition.x, y: newPosition.y});
+            }, 1000)
             
             
         }}
@@ -94,7 +97,7 @@ export default function Circle({x, y, firstColor, file}) {
         ref={positionRef}
         className="circle" 
         style={{width: '100px', height: '100px', borderRadius: '50%', backgroundColor: color,
-        top: position.y, left: position.x}}>
+        top: positions[id].y, left: positions[id].x}}>
 
         </div>
     )

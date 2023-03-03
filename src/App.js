@@ -4,18 +4,45 @@ import {useState} from "react"
 
 function App() {
 
-const [positions, setPositions] = useState([{x: 0, y: 0}, {x: 400, y: 400}])
+const [positions, setPositions] = useState([{id: 0, x: 0, y: 0}, {id: 1, x: 400, y: 400}])
 
 
+  function handleSetPositions(x, y, id, oldPositions) {
+
+    //positions isn't updating, but newPositions is?
+    
+
+    const newPositions = oldPositions.map((position, index) => {
+
+      if (position.id === id) {
+        return {id: id, x: x, y: y}
+      } else {
+        return position
+      }
+    })
+
+    //handleCollision(newPositions)
+  
+    
+    setPositions(newPositions)
+  }
 
   const circles = positions.map((p, index) => {
+    
     return (
     <Circle 
-      x={p[index].x}
-      y={p[index].y}
-    />
+      key={index}
+      id={p.id}
+      x={p.x}
+      y={p.y}
+      firstColor={'green'}
+      sound={'A4'}
+      positions={positions}
+      onSetPositions={handleSetPositions}
+    />)
+  }
     )
-  })
+  
 
   return (
 
@@ -23,18 +50,7 @@ const [positions, setPositions] = useState([{x: 0, y: 0}, {x: 400, y: 400}])
       <div className="page-container">
 
       
-        <Circle
-        x={0}
-        y={0} 
-        firstColor={'green'}
-        sound={'A4'}
-        />
-         <Circle
-        x={800}
-        y={400} 
-        firstColor={'blue'}
-        sound={'B4'}
-        />
+        {circles}
          {/* <Circle
         x={400}
         y={200} 
