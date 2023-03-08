@@ -4,7 +4,7 @@ import useInterval from "./useInterval.js"
 
 
 
-export default function Circle({id, firstColor, sound, positions, onSetPositions}) {
+export default function Circle({id, firstColor, sound, positions, onSetPositions, onSetDirections}) {
 
     // const sound = new Audio(`../Piano_mp3/${file}.mp3`)
     // const sound = new Audio('/Users/matthew/Desktop/Coding/1A_Project_Ideas/bounce-beta/src/static/Piano_mp3/A4.mp3')
@@ -14,7 +14,7 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
     // const [position, setPosition] = useState({x: x, y: y})
     const [color, setColor] = useState(firstColor)
     const [position, setPosition] = useState({x: positions[id].x, y: positions[id].y})
-    const [direction, setDirection] = useState({right: true, down: true})
+    const [direction, setDirection] = useState({right: positions[id].right, down: positions[id].down})
     const [timerStarted, setTimerStarted] = useState(false)
 
    
@@ -22,15 +22,15 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
     function moveBall() {
 
 
-        if (direction.down && direction.right) {
-            console.log('down and right')
+        if (positions[id].down && positions[id].right) {
+          
             setPosition((prev) =>{ return {x: prev.x + 1, y: prev.y + 1}})
           
-        } else if (direction.down && !direction.right) {
-            console.log('up and right')
+        } else if (positions[id].down && !positions[id].right) {
+         
             setPosition((prev) =>{ return {x: prev.x - 1, y: prev.y + 1}})
             
-        } else if (!direction.down && direction.right) {
+        } else if (!positions[id].down && positions[id].right) {
             
             setPosition((prev) =>{ return {x: prev.x + 1, y: prev.y - 1}})
         } else {
@@ -50,68 +50,47 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
 
 
     //initialize starting position / direction of ball
-    let xPosition = position.x;
-    let yPosition = position.y;
-
-
-
-    function startTimer() {
-      
-
-    }
-
-
-   
-
-
-    function timer() {
-
-        console.log(position)        
-            
-
-    }
+    // let xPosition = position.x;
+    // let yPosition = position.y;
 
 
     useInterval(() => {
 
-        console.log(position)
-
         moveBall()
-            if (direction.down) {
-                yPosition++;
-            } else {
+            // if (direction.down) {
+            //     yPosition++;
+            // } else {
                 
-                yPosition--;
-            }
-            if (direction.right) {
-                xPosition++;
-            } else {
-                xPosition--;
-            }
+            //     yPosition--;
+            // }
+            // if (direction.right) {
+            //     xPosition++;
+            // } else {
+            //     xPosition--;
+            // }
 
             
             if (position.y > 580) {
-                
-                // animate();
                 // sound.play();
-                setDirection((prev) =>{ return {right: direction.right, down: false}})
+                // setDirection((prev) =>{ return {right: direction.right, down: false}})
+                onSetDirections(positions[id].right, false, positions[id].id)
             }
-            if (position.y == 0) {
-                // animate();
+            if (position.y <= 0) {
                 // sound.play();
-                setDirection((prev) => {return {right: direction.right, down: true}})
+                // setDirection((prev) => {return {right: direction.right, down: true}})
+                onSetDirections(positions[id].right, true, positions[id].id)
             }
-            if (position.x == 0) {
-                // animate();
+            if (position.x <= 0) {
                 // sound.play();
-                setDirection((prev) => {return {right: true, down: direction.down}})
+                // setDirection((prev) => {return {right: true, down: direction.down}})
+                onSetDirections(true, positions[id].down, positions[id].id)
             } if (position.x > 1200) {
-                // animate();
                 // sound.play();
-                setDirection((prev) => {return{right: false, down: direction.down}})
+                // setDirection((prev) => {return{right: false, down: direction.down}})
+                onSetDirections(false, positions[id].down, positions[id].id)
             }
        
-}, 10)   
+}, 20)   
    
 
     
