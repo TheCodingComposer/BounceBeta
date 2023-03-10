@@ -1,131 +1,170 @@
 import Circle from "./components/Circle.js"
 import './App.css';
-import {useState} from "react"
+import {useRef, useState} from "react"
 import useInterval from "./components/useInterval.js";
 
 function App() {
 
   //better to use as object with keys? i.e. 1: {id: 1, x: , y: }
-const [positions, setPositions] = useState([{id: 0, x: 0, y: 0, right: true, down: true}, {id: 1, x: 400, y: 400, right: true, down: true}])
+const [positions, setPositions] = useState([{id: 0, x: 0, y: 0, right: true, down: true}, {id: 1, x: 400, y: 400, right: true, down: true}, {id: 2, x: 200, y: 100, right: true, down: true}])
 
 
-  function handleSetPositions(x, y, id, oldPositions) {
+
+const [speed, setSpeed] = useState(10)
+
+
+  let collectedPositions = []
+
+  function handleSetPositions(id, x, y, right, down) {
+
+
+
+    // if (id === 0) {
+    //   collectedPositions = [];
+    // }
+
+    if (id !== positions.length - 1) {
+      collectedPositions.push({id: id, x: x, y: y, right: right, down})
+    } else {
+      collectedPositions.push({id: id, x: x, y: y, right: right, down})
+
+      //add a toggle that only fires checkCollisions every other frame?
+      
+      const checkedPositions = checkCollision(collectedPositions);
+
+      if (collectedPositions.length == positions.length) {
+      setPositions(collectedPositions)
+      collectedPositions = [];
+      }
+    }
 
     //positions isn't updating, but newPositions is?
+
+    //   const positionsCopy = [...positions];
     
 
-    const newPositions = oldPositions.map((position, index) => {
+    // const newPositions = positionsCopy.map((position, index) => {
 
-      if (position.id === id) {
-        return {id: id, x: x, y: y, right: position.right, down: position.down}
-      } else {
-        return position
-      }
-    })
+    //   if (position.id === id) {
+    //     return {id: id, x: x, y: y, right: position.right, down: position.down}
+    //   } else {
+    //     return position
+    //   }
+    // })
 
-    
     // checkCollision(newPositions)
+    
+    // setState(prev => {
+  //   return {
+//     ...prev,
+//     [id]: obj ??????
+//   }
+// });
+
+    // setPositions(prev => newPositions)
   
     
-    setPositions(newPositions)
   }
 
 
-  useInterval(() => {
-    checkCollision();
+  // useInterval(() => {
+  //   checkCollision();
 
-  }, 10)
-
-
-  function checkCollision() {
+  // }, speed * 2 - 10)
 
 
+  function checkCollision(collectedPositions) {
 
-    // const currentPositions = [...positions]
+
+
+   
     
-    // let changeRight = false;
-    // let changeDown = false;
-    // let firstPosition = {};
-    // let secondPosition = {};
+    let changeRight = false;
+    let changeDown = false;
+    let firstPosition = {};
+    let secondPosition = {};
 
-    // if (currentPositions.length < 2) {
-    //   return;
-    // }
+    if (collectedPositions.length < 2) {
+      
+      return collectedPositions;
+    }
 
 
-    // currentPositions.forEach((pos, index) => {
+    collectedPositions.forEach((pos, index) => {
 
     
 
-    //     const otherPositions = [...currentPositions];
-    //     otherPositions.splice(index, 1);
+        const otherPositions = [...collectedPositions];
+        otherPositions.splice(index, 1);
 
 
 
-    //     otherPositions.forEach((otherPos) => {
+        otherPositions.forEach((otherPos) => {
 
           
           
-    //       if (Math.abs(pos.x = otherPos.x) <= 100 && Math.abs(pos.y - otherPos.y) <= 100 && changeRight == false) {
+          if (Math.abs(pos.x - otherPos.x) <= 100 && Math.abs(pos.y - otherPos.y) <= 100 && changeRight == false) {
 
         
-    //           console.log('right')
-    //           changeRight = true;
-    //           firstPosition = pos;
+              console.log('right')
+              changeRight = true;
+              firstPosition = pos;
               
-    //           secondPosition = otherPos;
+              secondPosition = otherPos;
 
             
             
-    //       }
+          }
 
-    //       if (pos.y === otherPos.y && changeDown == false) {
-    //         console.log('down')
-    //         changeDown = true;
-    //         firstPosition = pos;
+          // if (pos.y === otherPos.y && changeDown == false) {
+          //   console.log('down')
+          //   changeDown = true;
+          //   firstPosition = pos;
            
-    //         secondPosition = otherPos;
+          //   secondPosition = otherPos;
            
-    //       }
-    //     })
+          // }
+        })
 
         
 
 
-    // })
+    })
 
 
-    // if (changeRight) {
-    //   const newPositions = currentPositions.map((pos, index) => {
-    //     if (firstPosition.id === index) {
-    //       return {...firstPosition, right: !firstPosition.right}
-    //     } else if (secondPosition.id === index) {
-    //       return {...secondPosition, right: !secondPosition.right}
-    //     } else {
-    //       return pos;
-    //     }
-    //   })
+    if (changeRight) {
+      const checkedPositions = collectedPositions.map((pos, index) => {
+        if (firstPosition.id === index) {
+          return {...firstPosition, right: !firstPosition.right}
+        } else if (secondPosition.id === index) {
+          return {...secondPosition, right: !secondPosition.right}
+        } else {
+          return pos;
+        }
+      })
 
-    //   console.log(newPositions)
-
-    //   // setPositions(newPositions)
-    // }
-
-    // if (changeDown) {
-    //   const newPositions = currentPositions.map((pos, index) => {
-    //     if (firstPosition.id === index) {
-    //       return {...firstPosition, down: !firstPosition.right}
-    //     } else if (secondPosition.id === index) {
-    //       return {...secondPosition, down: !secondPosition.right}
-    //     } else {
-    //       return pos;
-    //     }
-    //   })
-
-    //   console.log(newPositions)
+      return checkedPositions;
 
       // setPositions(newPositions)
-    // }
+    } else if (changeDown) {
+      const checkedPositions = collectedPositions.map((pos, index) => {
+        if (firstPosition.id === index) {
+          return {...firstPosition, down: !firstPosition.right}
+        } else if (secondPosition.id === index) {
+          return {...secondPosition, down: !secondPosition.right}
+        } else {
+          return pos;
+        }
+      })
+
+      console.log(checkedPositions)
+      return checkedPositions;
+    
+      
+    } else {
+      console.log(collectedPositions)
+        return collectedPositions;
+    }
   }
 
   function handleSetDirections(right, down, id) {
@@ -134,12 +173,15 @@ const [positions, setPositions] = useState([{id: 0, x: 0, y: 0, right: true, dow
           if (pos.id === id) {
             return {...pos, right: right, down: down}
           } else {
+            
             return pos
           }
       })
 
       setPositions(newPositions)
   }
+
+ 
 
 
 
@@ -158,6 +200,7 @@ const [positions, setPositions] = useState([{id: 0, x: 0, y: 0, right: true, dow
       positions={positions}
       onSetPositions={handleSetPositions}
       onSetDirections={handleSetDirections}
+      speed={speed}
     />)
   }
     )

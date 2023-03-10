@@ -4,7 +4,7 @@ import useInterval from "./useInterval.js"
 
 
 
-export default function Circle({id, firstColor, sound, positions, onSetPositions, onSetDirections}) {
+export default function Circle({id, firstColor, sound, positions, onSetPositions, onSetDirections,  speed}) {
 
     // const sound = new Audio(`../Piano_mp3/${file}.mp3`)
     // const sound = new Audio('/Users/matthew/Desktop/Coding/1A_Project_Ideas/bounce-beta/src/static/Piano_mp3/A4.mp3')
@@ -42,10 +42,12 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
     }
 
     useEffect(() => {
-        onSetPositions(position.x, position.y, id, positions)
+        // setTimeout(() => {
+            onSetPositions(id, position.x, position.y, positions[id].right, positions[id].down)
+        // }, (speed / positions.length) * id)
+        
     }, [position])
 
-   
 
 
 
@@ -90,7 +92,7 @@ export default function Circle({id, firstColor, sound, positions, onSetPositions
                 onSetDirections(false, positions[id].down, positions[id].id)
             }
        
-}, 20)   
+}, speed)   
    
 
     
